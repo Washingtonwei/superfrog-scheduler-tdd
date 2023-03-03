@@ -25,7 +25,7 @@ public class SuperFrogStudent {
         this.id = id;
     }
 
-    public PaymentForm generatePaymentForm(List<SuperFrogAppearanceRequest> requests) {
+    public PaymentForm generatePaymentForm(List<SuperFrogAppearanceRequest> requests, Period paymentPeriod) {
         /**
          * Group the given requests by their event type (TCU, NONPROFIT, and PRIVATE), then for each event type, calculate the number of hours
          * this SuperFrogStudent has worked. The result of this step is a Map<EventType, Double>.
@@ -42,22 +42,29 @@ public class SuperFrogStudent {
 
         // Calculate the total appearance fee by going over the map.
         for (Map.Entry<EventType, Double> entry : eventTypeHoursMap.entrySet()) {
-            if (entry.getKey() == EventType.TCU || entry.getKey() == EventType.NONPROFIT) {
-                totalAppearanceFee = totalAppearanceFee.add(BigDecimal.valueOf(100).multiply(BigDecimal.valueOf(entry.getValue())));
-            } else {
-                totalAppearanceFee = totalAppearanceFee.add(BigDecimal.valueOf(175).multiply(BigDecimal.valueOf(entry.getValue())));
-            }
+            totalAppearanceFee = totalAppearanceFee
+                    .add(BigDecimal.valueOf(entry.getKey().getHourlyRate())
+                            .multiply(BigDecimal.valueOf(entry.getValue())));
         }
 
         // We also need to consider transportation fee.
-        Double totalMileage = requests.stream()
-                .map(request -> request.getDistance() - 2) // The first 2 miles are free of charge.
-                .filter(distance -> distance.compareTo(0.0) > 0)
-                .reduce(0.0, (subtotal, distance) -> subtotal + distance);
+        BigDecimal transportationFee = TransportationFeeCalculator.INSTANCE.calculateTransportationFee(requests);
 
-        BigDecimal transportationFee = BigDecimal.valueOf(0.75).multiply(BigDecimal.valueOf(totalMileage));
+        BigDecimal totalAmount = totalAppearanceFee.add(transportationFee);
 
-        return new PaymentForm(totalAppearanceFee.add(transportationFee));
+        return new PaymentForm(this.firstName, this.lastName, this.id, paymentPeriod, totalAmount);
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
 }

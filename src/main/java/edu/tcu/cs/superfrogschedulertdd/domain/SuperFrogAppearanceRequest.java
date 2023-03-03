@@ -9,11 +9,13 @@ import java.time.LocalTime;
  */
 public class SuperFrogAppearanceRequest {
 
+    private Integer requestId;
+
     private EventType eventType;
 
     private String address;
 
-    private Double distance;
+    private Double mileage;
 
     private LocalDate eventDate;
 
@@ -26,10 +28,11 @@ public class SuperFrogAppearanceRequest {
     private SuperFrogStudent student;
 
 
-    public SuperFrogAppearanceRequest(EventType eventType, String address, Double distance, LocalDate eventDate, LocalTime startTime, LocalTime endTime, RequestStatus status, SuperFrogStudent student) {
+    public SuperFrogAppearanceRequest(Integer requestId, EventType eventType, String address, Double mileage, LocalDate eventDate, LocalTime startTime, LocalTime endTime, RequestStatus status, SuperFrogStudent student) {
+        this.requestId = requestId;
         this.eventType = eventType;
         this.address = address;
-        this.distance = distance;
+        this.mileage = mileage;
         this.eventDate = eventDate;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -37,12 +40,24 @@ public class SuperFrogAppearanceRequest {
         this.student = student;
     }
 
+    /**
+     * This method returns the extra mileage over the provided freeMileage.
+     * If the distance is no greater than the provided freeMileage, the method returns 0.0.
+     * Otherwise, it returns the extra mileage.
+     *
+     * @param freeMileage for example, the current free mileage is 2 miles.
+     * @return extra mileage
+     */
+    public Double getMileageOver(Double freeMileage) {
+        return this.mileage.compareTo(freeMileage) <= 0 ? 0.0 : this.mileage - freeMileage;
+    }
+
     public EventType getEventType() {
         return eventType;
     }
 
-    public Double getDistance() {
-        return distance;
+    public Double getMileage() {
+        return mileage;
     }
 
     public LocalTime getStartTime() {

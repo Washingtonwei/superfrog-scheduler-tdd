@@ -8,6 +8,17 @@ package edu.tcu.cs.superfrogschedulertdd.domain;
  */
 public enum EventType {
 
-    TCU, NONPROFIT, PRIVATE
+    TCU(100), NONPROFIT(100), PRIVATE(175);
+
+    private int hourlyRate;
+
+
+    EventType(int hourlyRate) {
+        this.hourlyRate = hourlyRate;
+    }
+
+    public int getHourlyRate() {
+        return hourlyRate;
+    }
 
 }

@@ -14,15 +14,43 @@ import java.math.BigDecimal;
  */
 public class PaymentForm {
 
+    private String firstName;
+
+    private String lastName;
+
+    private Integer studentId;
+
+    private Period paymentPeriod;
+
     private BigDecimal amount;
 
 
-    public PaymentForm(BigDecimal amount) {
+    public PaymentForm(String firstName, String lastName, Integer studentId, Period paymentPeriod, BigDecimal amount) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.studentId = studentId;
+        this.paymentPeriod = paymentPeriod;
         this.amount = amount;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public Integer getStudentId() {
+        return studentId;
+    }
+
+    public Period getPaymentPeriod() {
+        return paymentPeriod;
+    }
+
     public BigDecimal getAmount() {
-        return this.amount;
+        return amount;
     }
 
 }
