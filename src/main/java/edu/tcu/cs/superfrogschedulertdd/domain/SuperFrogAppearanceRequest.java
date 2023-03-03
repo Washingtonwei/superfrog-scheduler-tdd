@@ -1,5 +1,8 @@
 package edu.tcu.cs.superfrogschedulertdd.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -7,8 +10,10 @@ import java.time.LocalTime;
  * A customer can request a SuperFrog appearance by submitting a SuperFrogAppearanceRequest.
  * A SuperFrogAppearanceRequest includes event-related information.
  */
+@Entity
 public class SuperFrogAppearanceRequest {
 
+    @Id
     private Integer requestId;
 
     private EventType eventType;
@@ -25,8 +30,12 @@ public class SuperFrogAppearanceRequest {
 
     private RequestStatus status;
 
+    @ManyToOne
     private SuperFrogStudent student;
 
+
+    public SuperFrogAppearanceRequest() {
+    }
 
     public SuperFrogAppearanceRequest(Integer requestId, EventType eventType, String address, Double mileage, LocalDate eventDate, LocalTime startTime, LocalTime endTime, RequestStatus status, SuperFrogStudent student) {
         this.requestId = requestId;

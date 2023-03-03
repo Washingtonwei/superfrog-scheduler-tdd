@@ -1,5 +1,7 @@
 package edu.tcu.cs.superfrogschedulertdd.domain;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -10,14 +12,19 @@ import java.util.stream.Collectors;
  * A SuperFrogStudent is a TCU student who plays as the mascot. She is a part of the TCU Spirit Team.
  * She gets paid for each appearance in an event.
  */
+@Entity
 public class SuperFrogStudent {
 
     private String firstName;
 
     private String lastName;
 
+    @Id
     private Integer id;
 
+
+    public SuperFrogStudent() {
+    }
 
     public SuperFrogStudent(String firstName, String lastName, Integer id) {
         this.firstName = firstName;

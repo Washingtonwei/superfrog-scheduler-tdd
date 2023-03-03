@@ -1,5 +1,6 @@
 package edu.tcu.cs.superfrogschedulertdd.domain;
 
+import jakarta.persistence.*;
 import java.math.BigDecimal;
 
 /**
@@ -12,7 +13,12 @@ import java.math.BigDecimal;
  * 3. hours
  * 4. mileage (distance between TCU and the event address, the first 2 miles are free of charge, then $0.75/mile)
  */
+@Entity
 public class PaymentForm {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer paymentFormId;
 
     private String firstName;
 
@@ -20,10 +26,15 @@ public class PaymentForm {
 
     private Integer studentId;
 
+    @Embedded
     private Period paymentPeriod;
 
     private BigDecimal amount;
 
+
+    public PaymentForm() {
+
+    }
 
     public PaymentForm(String firstName, String lastName, Integer studentId, Period paymentPeriod, BigDecimal amount) {
         this.firstName = firstName;
