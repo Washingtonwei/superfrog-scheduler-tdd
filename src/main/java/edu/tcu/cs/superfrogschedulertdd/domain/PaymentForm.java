@@ -14,8 +14,15 @@ import java.math.BigDecimal;
  */
 public class PaymentForm {
 
+    private BigDecimal amount;
+
+
+    public PaymentForm(BigDecimal amount) {
+        this.amount = amount;
+    }
+
     public BigDecimal getAmount() {
-        return null;
+        return this.amount;
     }
 
 }
