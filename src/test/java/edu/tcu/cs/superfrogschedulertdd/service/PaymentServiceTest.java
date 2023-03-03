@@ -127,10 +127,69 @@ public class PaymentServiceTest {
         List<PaymentForm> paymentForms = this.paymentService.generatePaymentForms(appearanceRequestIdList, paymentPeriod);
 
         // Then
-        verify(this.requestRepository, times(1)).findByRequestIdIn(appearanceRequestIdList);
-        verify(this.paymentFormRepository, times(1)).saveAll(Mockito.any(List.class));
         assertThat(paymentForms).isNotNull();
         assertThat(paymentForms.size()).isEqualTo(3);
+        verify(this.requestRepository, times(1)).findByRequestIdIn(appearanceRequestIdList);
+        verify(this.paymentFormRepository, times(1)).saveAll(Mockito.any(List.class));
+    }
+
+    @Test
+    public void should_generate_payment_forms_for_SuperFrog_students_with_empty_request_list() {
+        // Given
+        List<Integer> appearanceRequestIdList = List.of(); // Assume the Spirit Director has selected 0 completed requests for April.
+
+        List<SuperFrogAppearanceRequest> requests = List.of();
+
+        given(this.requestRepository.findByRequestIdIn(appearanceRequestIdList)).willReturn(requests);
+
+        given(this.paymentFormRepository.saveAll(anyList())).will(returnsFirstArg()); // Return the input argument.
+
+        Period paymentPeriod = new Period(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 30));
+
+        // When
+        List<PaymentForm> paymentForms = this.paymentService.generatePaymentForms(appearanceRequestIdList, paymentPeriod);
+
+        // Then
+        assertThat(paymentForms).isNotNull();
+        assertThat(paymentForms.size()).isEqualTo(0);
+        verify(this.requestRepository, times(1)).findByRequestIdIn(appearanceRequestIdList);
+        verify(this.paymentFormRepository, times(1)).saveAll(Mockito.any(List.class));
+    }
+
+    @Test
+    public void should_generate_payment_forms_for_SuperFrog_students_with_only_one_request() {
+        // Given
+        List<Integer> appearanceRequestIdList = List.of(5); // Assume the Spirit Director has selected only 1 completed request for April.
+
+        SuperFrogStudent student1 = new SuperFrogStudent("Jane", "Smith", 1001); // First name, last name, and ID
+
+        List<SuperFrogAppearanceRequest> requests = List.of(
+                new SuperFrogAppearanceRequest(
+                        5,
+                        EventType.TCU,                                   // The type of the event
+                        "Event address 1",                               // Physical address of the event
+                        1.4,                                             // Distance between TCU and the event address
+                        LocalDate.of(2023, 4, 6),   // Event's date
+                        LocalTime.of(13, 0),                  // Event's start time
+                        LocalTime.of(15, 30),                 // Event's end time
+                        RequestStatus.COMPLETED,                          // Event status
+                        student1)                                        // The SuperFrog Student who signed up for the event
+        );
+
+        given(this.requestRepository.findByRequestIdIn(appearanceRequestIdList)).willReturn(requests);
+
+        given(this.paymentFormRepository.saveAll(anyList())).will(returnsFirstArg()); // Return the input argument.
+
+        Period paymentPeriod = new Period(LocalDate.of(2023, 4, 1), LocalDate.of(2023, 4, 30));
+
+        // When
+        List<PaymentForm> paymentForms = this.paymentService.generatePaymentForms(appearanceRequestIdList, paymentPeriod);
+
+        // Then
+        assertThat(paymentForms).isNotNull();
+        assertThat(paymentForms.size()).isEqualTo(1);
+        verify(this.requestRepository, times(1)).findByRequestIdIn(appearanceRequestIdList);
+        verify(this.paymentFormRepository, times(1)).saveAll(Mockito.any(List.class));
     }
 
 }
