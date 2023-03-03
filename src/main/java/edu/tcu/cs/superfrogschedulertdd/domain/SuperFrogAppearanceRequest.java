@@ -68,4 +68,8 @@ public class SuperFrogAppearanceRequest {
         return endTime;
     }
 
+    public SuperFrogStudent getStudent() {
+        return student;
+    }
+
 }

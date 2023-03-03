@@ -1,12 +1,13 @@
 package edu.tcu.cs.superfrogschedulertdd.service;
 
-import edu.tcu.cs.superfrogschedulertdd.domain.PaymentForm;
-import edu.tcu.cs.superfrogschedulertdd.domain.Period;
+import edu.tcu.cs.superfrogschedulertdd.domain.*;
 import edu.tcu.cs.superfrogschedulertdd.repository.PaymentFormRepository;
 import edu.tcu.cs.superfrogschedulertdd.repository.SuperFrogAppearanceRequestRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PaymentService {
@@ -22,7 +23,26 @@ public class PaymentService {
     }
 
     public List<PaymentForm> generatePaymentForms(List<Integer> appearanceRequestIdList, Period paymentPeriod) {
-        return List.of();
+        List<SuperFrogAppearanceRequest> selectedRequests = this.requestRepository.findByRequestIdIn(appearanceRequestIdList);
+
+        /**
+         * Group the given requests by SuperFrogStudent who has finished this request.
+         * The result of this step is a Map<SuperFrogStudent, List<SuperFrogAppearanceRequest>>.
+         * For example:
+         *  Jane Smith -> request 5, request 6, request 12
+         *  John Doe -> request 16, request 17, request 20
+         *  Jane Smith -> request 22
+         */
+        Map<SuperFrogStudent, List<SuperFrogAppearanceRequest>> studentRequestsMap = selectedRequests.stream()
+                .collect(Collectors.groupingBy(SuperFrogAppearanceRequest::getStudent));
+
+        // For each SuperFrogStudent, generate a payment form, and then collect the payment forms into a list.
+        List<PaymentForm> paymentForms = studentRequestsMap.entrySet().stream()
+                .map(entry -> entry.getKey().generatePaymentForm(entry.getValue(), paymentPeriod))
+                .collect(Collectors.toList());
+
+        // Persist the generated payment forms and then return them.
+        return this.paymentFormRepository.saveAll(paymentForms);
     }
 
 }
